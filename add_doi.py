@@ -32,14 +32,11 @@ doi_plain = ''
 #print form
 for field_name in form:
     field=form[field_name]
-    if field.name == 'reupload_text':
-        if form['reupload_text'].value == 'on':
-            print "<p>reupload_text: %s</p>" % form['reupload_text'].value
-            reupload.append('reupload_text')
-    if field.name == 'reupload_images':
-        if form['reupload_images'].value == 'on':
-            print "<p>reupload_images: %s</p>" % form['reupload_images'].value
-            reupload.append('reupload_images')
+    for check in ['reupload_text', 'reupload_images', 'reupload_equationstables']:
+        if field.name == check:
+            if form[check].value == 'on':
+                print "<p>%s : %s</p>" % (check, form[check].value)
+                reupload.append(check)
     if field.name == 'doi':
         doi_plain = field.value
         doi_safe = cgi.escape(repr(doi_plain))
