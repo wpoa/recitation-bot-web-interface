@@ -1,6 +1,9 @@
 import cgi
 import cgitb
 import os
+import sys
+sys.path.append('/data/project/recitation-bot/recitation-bot/recitation-bot/')
+import status_page
 
 cgitb.enable()
 
@@ -15,8 +18,10 @@ print "<body>"
 print "<form method='post'>"
 print "Enter a doi (don't include 'http://dx.doi.org/'):"
 print "<input type='text' name='doi' value='' /><BR/>"
-print "If DOI already uploaded, force reupload of <input type='checkbox' name='reupload_text' />text"
-print "<input type='checkbox' name='reupload_images' />images.<br/>"
+print "If DOI already uploaded, force reupload of "
+print "<input type='checkbox' name='reupload_text' />text"
+print "<input type='checkbox' name='reupload_images' />images"
+print "<input type='checkbox' name='reupload_equationstables' />equations and tables.<br/>"
 print "<input type='submit' value='submit form' />"
 print "</form>"
 form = cgi.FieldStorage()
@@ -49,23 +54,7 @@ if doi_plain:
     print "<p>%s will be uploaded shortly</p>" % doi_safe
     url = 'http://tools.wmflabs.org/recitation-bot/' + doi_plain + '.html'
     print "<p>Follow the upload status at <a href='%s'>%s</a> </p>" % (url, url)
-    #make the waiting page
-    waiting_page_path = '/data/project/recitation-bot/public_html/'+doi_plain+'.html'
-    if not os.path.exists(os.path.dirname(waiting_page_path)):
-        os.makedirs(os.path.dirname(waiting_page_path))
-    if os.path.isfile(waiting_page_path):
-        pass #there's nothing to do since its already been uplaoded
-    else:
-        waiting_page = open(waiting_page_path, 'w')
-        waiting_text = r'''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<title>waiting</title>
-<html>
-<body>
-<p>%s being processed, we have to fetch and crunch a lot of data, long articles can take upto 5 minutes depending on traffic loads</p>
-</body>
-</html>''' % doi_plain
-        waiting_page.write(waiting_text)
-        waiting_page.close()
+    status_page.make_status_page(doi=doi_plain, success=None, error_msg=None,ja=None, inqueue=True)
 
 
 print "</ul>"
