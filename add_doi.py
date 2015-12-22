@@ -19,10 +19,11 @@ print "<form method='post'>"
 print "Enter a doi (don't include 'http://dx.doi.org/'):"
 print "<input type='text' name='doi' value='' /><BR/>"
 print "If DOI already uploaded, force reupload of "
-print "<input type='checkbox' name='reupload_text' />text"
-print "<input type='checkbox' name='reupload_images' />images"
-print "<input type='checkbox' name='reupload_equationstables' />equations and tables.<br/>"
-print "<input type='submit' value='submit form' />"
+reupload_vars = ['reupload_text', 'reupload_images', 'reupload_equations', 'reupload_tables']
+reupload_text = ['text', 'images', 'equations', 'tables']
+for var, text in zip(reupload_vars, reupload_text):
+    print "<input type='checkbox' name='%s' />%s" % (var, text)
+print ".<br /><input type='submit' value='submit form' />"
 print "</form>"
 form = cgi.FieldStorage()
 
@@ -32,7 +33,7 @@ doi_plain = ''
 #print form
 for field_name in form:
     field=form[field_name]
-    for check in ['reupload_text', 'reupload_images', 'reupload_equationstables']:
+    for check in reupload_vars:
         if field.name == check:
             if form[check].value == 'on':
                 print "<p>%s : %s</p>" % (check, form[check].value)
